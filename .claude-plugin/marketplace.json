@@ -1,0 +1,31 @@
+{
+  "name": "nhall-skills",
+  "owner": {
+    "name": "Nick Hall"
+  },
+  "description": "Claude Code skills by Nick Hall.",
+  "plugins": [
+    {
+      "name": "shared-audit",
+      "source": "./plugins/shared-audit",
+      "description": "Audit the current diff for new helpers that duplicate utilities the project already has."
+    },
+    {
+      "name": "timemap",
+      "source": {
+        "source": "github",
+        "repo": "nhall/timemap"
+      },
+      "description": "Turn a day of Claude Code sessions into a Time Map: hours per ticket, overlap between parallel sessions, and gaps with no activity."
+    },
+    {
+      "name": "unslop",
+      "source": {
+        "source": "github",
+        "repo": "theclaymethod/unslop"
+      },
+      "strict": false,
+      "description": "Find and fix formulaic or unclear writing (third-party: theclaymethod/unslop)."
+    }
+  ]
+}

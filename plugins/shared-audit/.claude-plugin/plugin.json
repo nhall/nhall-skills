@@ -1,0 +1,8 @@
+{
+  "name": "shared-audit",
+  "description": "Audit the current diff for new helpers that duplicate utilities the project already has.",
+  "author": {
+    "name": "Nick Hall"
+  },
+  "license": "MIT"
+}
