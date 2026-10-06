@@ -17,15 +17,6 @@
         "repo": "nhall/timemap"
       },
       "description": "Turn a day of Claude Code sessions into a Time Map: hours per ticket, overlap between parallel sessions, and gaps with no activity."
-    },
-    {
-      "name": "unslop",
-      "source": {
-        "source": "github",
-        "repo": "theclaymethod/unslop"
-      },
-      "strict": false,
-      "description": "Find and fix formulaic or unclear writing (third-party: theclaymethod/unslop)."
     }
   ]
 }
