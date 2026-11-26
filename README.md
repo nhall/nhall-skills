@@ -17,7 +17,7 @@ Install only the ones you want. Auto-update is off by default for marketplaces o
 | Plugin | What it does |
 |---|---|
 | [`shared-audit`](plugins/shared-audit/skills/shared-audit/SKILL.md) | Before you commit, checks the diff for new helpers that duplicate utilities the project already has in its shared or common code, and reports matches by confidence. Reports only; it never edits. |
-| [`timemap`](https://github.com/nhall/timemap) | Turns a day of Claude Code sessions into a Time Map: hours per ticket, overlap between parallel sessions, and gaps with no activity. Lives in its own repo. |
+| [`timemap`](https://github.com/nhall/timemap) | Turns a day of Claude Code sessions into a Time Map: hours per ticket and gaps with no activity. Lives in its own repo. |
 
 Bigger skills get their own repo and are listed here by reference, so this marketplace is the one place to find everything.
 
