@@ -16,7 +16,7 @@
         "source": "github",
         "repo": "nhall/timemap"
       },
-      "description": "Turn a day of Claude Code sessions into a Time Map: hours per ticket, overlap between parallel sessions, and gaps with no activity."
+      "description": "Turn a day of Claude Code sessions into a Time Map: hours per ticket and gaps with no activity."
     }
   ]
 }
