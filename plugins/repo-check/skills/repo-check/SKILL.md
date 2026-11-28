@@ -20,7 +20,7 @@ Add `--owner <org>` only if the user names one; the default is the logged-in `gh
 Each repo in the JSON has:
 
 - `dependabot`, `code_scanning`, `secret_scanning`: a list of open alerts, or `null` when that feature is off for the repo (not the same as an empty list).
-- `prs`: open Dependabot PRs with `age_days`, `checks` (passing, failing, pending, none), `major`, `conflicts`, `security`.
+- `prs`: open Dependabot PRs with `age_days`, `checks` (passing, failing, pending, none), `bump` (major, minor, unknown), `conflicts`, and `fixes_alerts_for` (the open-alert packages the PR bumps).
 - `manifests`: dependency files found, only filled in when Dependabot alerts are off and the repo isn't a fork.
 - `ignored`: true when the user listed the repo in `~/.config/repo-check/ignore` (or `$REPO_CHECK_IGNORE`) as deliberately unmonitored. Don't report its `manifests`.
 - `errors`: checks that failed. A repo with errors was not fully checked.
@@ -40,10 +40,10 @@ Rank in this order:
 While ranking:
 
 - Group Dependabot alerts by package. Several alerts often share one fix ("update vite to 6.4.4 closes 5 alerts"). Say what to update to, from `patched`.
-- Match alerts to open PRs. If a Dependabot PR already bumps the vulnerable package, the action is "merge PR #N", not a manual update.
+- Match alerts to open PRs with `fixes_alerts_for`. If a PR already bumps the vulnerable package, the action is "merge PR #N", not a manual update, and that PR ranks with the alert it fixes.
 - For each PR give a verdict:
-  - Safe to merge: patch or minor, checks passing, no conflicts.
-  - Review first: `major` is true (read the changelog for breaking changes), or checks are failing or `none`.
+  - Safe to merge: `bump` is minor, checks passing, no conflicts.
+  - Review first: `bump` is major (read the changelog for breaking changes) or unknown (a grouped PR; list what it bumps), or checks are failing or `none`.
   - Needs rebase: `conflicts` is true. Comment `@dependabot rebase` on the PR.
   - Mention any PR open more than 30 days as stale.
 - For an unmonitored repo, ask whether the dependencies there are installed or deployed. If not, offer to add it to the ignore file rather than enabling alerts.

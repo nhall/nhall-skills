@@ -36,7 +36,25 @@ MANIFEST_RE = re.compile(
 SKIP_DIRS = ("node_modules/", "vendor/")
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "moderate": 2, "low": 3, "warning": 3,
                   "note": 4, "error": 1}
-BUMP_RE = re.compile(r"from v?(\d+)\.?\S* to v?(\d+)\.?\S*")
+BUMP_RE = re.compile(r"from v?(\d+)(?:\.(\d+))?\S* to v?(\d+)(?:\.(\d+))?")
+
+
+def bump_kind(title):
+    """'major', 'minor' (minor or patch) or 'unknown' for a Dependabot PR title.
+
+    Grouped PRs ("bump the npm group ... with 5 updates") don't say, so they are
+    'unknown'. Under semver a 0.x minor bump (0.27 -> 0.28) may break, so it counts
+    as major.
+    """
+    m = BUMP_RE.search(title)
+    if not m:
+        return "unknown"
+    old_major, old_minor, new_major, new_minor = m.groups()
+    if old_major != new_major:
+        return "major"
+    if old_major == "0" and old_minor != new_minor:
+        return "major"
+    return "minor"
 
 
 class GhError(Exception):
@@ -130,14 +148,17 @@ def check_repo(repo):
                 check_state = "passing"
             else:
                 check_state = "none"
-            m = BUMP_RE.search(p["title"])
-            major = bool(m and m.group(1) != m.group(2))
             created = datetime.fromisoformat(p["createdAt"].replace("Z", "+00:00"))
+            # Dependabot security PRs have the same titles as version updates, so match
+            # the title against this repo's open alert packages instead.
+            fixes = sorted({a["package"] for a in result["dependabot"] or []
+                            if re.search(rf"\bbump {re.escape(a['package'].lower())}(?=\s|$)",
+                                         p["title"].lower())})
             result["prs"].append({
                 "number": p["number"], "title": p["title"], "url": p["url"],
                 "age_days": (now - created).days, "checks": check_state,
-                "major": major, "conflicts": p.get("mergeable") == "CONFLICTING",
-                "security": "security" in p["title"].lower(),
+                "bump": bump_kind(p["title"]), "conflicts": p.get("mergeable") == "CONFLICTING",
+                "fixes_alerts_for": fixes,
             })
     except GhError as e:
         result["errors"].append(f"dependabot PRs: {e}")
@@ -196,12 +217,14 @@ def print_report(owner, results, ignore):
             lines.append(f"  [secret] {a['type']} exposed since {a['created']}\n      {a['url']}")
         for p in sorted(r["prs"], key=lambda p: -p["age_days"]):
             flags = [f"{p['age_days']}d old", f"checks {p['checks']}"]
-            if p["major"]:
+            if p["bump"] == "major":
                 flags.append("MAJOR version")
+            elif p["bump"] == "unknown":
+                flags.append("bump size unknown")
             if p["conflicts"]:
                 flags.append("merge conflicts")
-            if p["security"]:
-                flags.append("security fix")
+            if p["fixes_alerts_for"]:
+                flags.append("fixes alerts for " + ", ".join(p["fixes_alerts_for"]))
             lines.append(f"  [PR #{p['number']}] {p['title']} ({', '.join(flags)})\n      {p['url']}")
         if lines:
             actionable += 1
