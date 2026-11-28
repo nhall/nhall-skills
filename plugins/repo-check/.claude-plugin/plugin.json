@@ -1,0 +1,8 @@
+{
+  "name": "repo-check",
+  "description": "Check all of a GitHub owner's repos for open security alerts and Dependabot PRs, and triage what needs action.",
+  "author": {
+    "name": "Nick Hall"
+  },
+  "license": "MIT"
+}

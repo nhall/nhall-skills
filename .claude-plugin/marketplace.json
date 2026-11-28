@@ -11,6 +11,11 @@
       "description": "Audit the current diff for new helpers that duplicate utilities the project already has."
     },
     {
+      "name": "repo-check",
+      "source": "./plugins/repo-check",
+      "description": "Check all of a GitHub owner's repos for open security alerts and Dependabot PRs, and triage what needs action."
+    },
+    {
       "name": "timemap",
       "source": {
         "source": "github",
